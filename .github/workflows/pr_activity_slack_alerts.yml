@@ -27,6 +27,7 @@ jobs:
           echo "::set-output name=activity_type::closed"
         elif [ "${{ github.event.action }}" = "created" ] && [ "${{ github.event_name }}" = "issue_comment" ]; then
           echo "::set-output name=activity_type::commented"
+          echo "::set-output name=pr_url::${{ github.event.issue.html_url }}"
         else
           echo "::set-output name=activity_type::${{ github.event.action }}"
         fi
@@ -38,7 +39,7 @@ jobs:
         fields: workflow,action
         custom_payload: |
           {
-            "text": "${{ github.actor }} ${{ steps.pr_activity.outputs.activity_type }} on a PR: <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>"
+            "text": "${{ github.actor }} ${{ steps.pr_activity.outputs.activity_type }} on a PR: <${{ steps.pr_activity.outputs.pr_url || github.event.pull_request.html_url }}|${{ github.event.pull_request.title || github.event.issue.title }}>"
           }
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
