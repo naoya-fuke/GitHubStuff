@@ -6,13 +6,16 @@ on:
       - opened
       - closed
       - review_requested
-      - review_comment_created
   pull_request_review:
     types:
       - submitted
+  issue_comment:
+    types:
+      - created
 
 jobs:
   send_slack_notification:
+    if: github.event.issue.pull_request  # Only run for PR comments, not regular issue comments
     runs-on: ubuntu-latest
     steps:
     - name: Determine PR Activity Type
@@ -22,6 +25,8 @@ jobs:
           echo "::set-output name=activity_type::merged"
         elif [ "${{ github.event.action }}" = "closed" ]; then
           echo "::set-output name=activity_type::closed"
+        elif [ "${{ github.event.action }}" = "created" ] && [ "${{ github.event_name }}" = "issue_comment" ]; then
+          echo "::set-output name=activity_type::commented"
         else
           echo "::set-output name=activity_type::${{ github.event.action }}"
         fi
@@ -33,7 +38,7 @@ jobs:
         fields: workflow,action
         custom_payload: |
           {
-            "text": "${{ github.actor }} ${{ steps.pr_activity.outputs.activity_type }} a PR: <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>"
+            "text": "${{ github.actor }} ${{ steps.pr_activity.outputs.activity_type }} on a PR: <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>"
           }
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
