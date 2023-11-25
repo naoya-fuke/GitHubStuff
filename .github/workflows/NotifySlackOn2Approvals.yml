@@ -11,11 +11,20 @@ jobs:
       - name: Check for 2 approvals
         id: approvals
         run: |
-          # スクリプトを追加して2つの承認を確認
-          # 例: GitHub APIを使用して承認数をカウント
+          # GitHubのレビューAPIエンドポイント
+          REVIEW_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews"
+
+          # GitHub APIを使用してレビューデータを取得
+          reviews=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $REVIEW_API_URL)
+
+          # 承認のカウント
+          approve_count=$(echo "$reviews" | jq '[.[] | select(.state == "APPROVED")] | length')
+
+          # 環境変数に承認数をセット
+          echo "approve_count=$approve_count" >> $GITHUB_ENV
 
       - name: Send notification to Slack
-        if: steps.approvals.outputs.count == '2'
+        if: env.approve_count == '2'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
