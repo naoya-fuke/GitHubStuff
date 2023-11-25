@@ -1,0 +1,22 @@
+name: Notify Slack on 2 Approvals
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for 2 approvals
+        id: approvals
+        run: |
+          # スクリプトを追加して2つの承認を確認
+          # 例: GitHub APIを使用して承認数をカウント
+
+      - name: Send notification to Slack
+        if: steps.approvals.outputs.count == '2'
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"2approve_PR-url: '$PR_URL'"}' ${{ secrets.SLACK_WEBHOOK_URL_2APPROVE }}
