@@ -45,5 +45,4 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"2approve_PR-url: '$PR_URL'"}' ${{ secrets.SLACK_WEBHOOK_URL_2APPROVE }}
-
+          curl -X POST -H 'Content-type: application/json' --data '{"2approve_PR-url": "'"$PR_URL"'"}' ${{ secrets.SLACK_WEBHOOK_URL_2APPROVE }}
