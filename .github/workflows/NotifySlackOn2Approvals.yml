@@ -24,7 +24,7 @@ jobs:
           echo "approve_count=$approve_count" >> $GITHUB_ENV
 
       - name: Send notification to Slack
-        if: env.approve_count == '2'
+        if: env.approve_count >= '2'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
