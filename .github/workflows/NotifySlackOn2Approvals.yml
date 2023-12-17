@@ -23,11 +23,15 @@ jobs:
           # 環境変数に承認数をセット
           echo "approve_count=$approve_count" >> $GITHUB_ENV
 
+      - name: Set PR info
+        run: |
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "PR_AUTHOR=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV
+          echo "REPOSITORY_NAME=${{ github.repository }}" >> $GITHUB_ENV
+
       - name: Send notification to Slack
         if: env.approve_count == '2'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"2approve_PR-url": "'"$PR_URL"'"}' ${{ secrets.SLACK_WEBHOOK_URL_2APPROVE }}
-
-  
+          curl -X POST -H 'Content-type: application/json' --data '{"text": "Repository: '$REPOSITORY_NAME'\nPR Title: '$PR_TITLE'\nAuthor: '$PR_AUTHOR'\nPR URL: '$PR_URL'"}' ${{ secrets.SLACK_WEBHOOK_URL_2APPROVE }}
