@@ -1,0 +1,26 @@
+name: Upload to Google Drive
+
+on: [push]
+
+jobs:
+  upload-to-drive:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install Google Client Library
+      run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+    - name: Upload File to Google Drive
+      env:
+        SERVICE_ACCOUNT_JSON: ${{ secrets.GCP_CREDENTIALS }}
+        DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+      run: |
+        echo "$SERVICE_ACCOUNT_JSON" > service_account.json
+        python upload_to_drive.py
