@@ -1,5 +1,7 @@
 GitHub Desktopを使用している場合でも、Visual Studio Code（VS Code）の統合ターミナルを利用してGitコマンドを実行することは可能です。VS Codeは、Git操作を簡単に行える強力なエディターであり、GitHub Desktopと併用することで開発ワークフローを効率化できます。
 
+
+
 GitHub DesktopとVS Codeを連携させる
 GitHub Desktopでプロジェクトを管理しながら、VS Codeでコードの編集やターミナルでのGit操作を行いたい場合、以下の手順を踏むことでセットアップできます。
 
